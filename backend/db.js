@@ -1,15 +1,15 @@
 const pg = require('pg');
-/* const { Pool } = require("pg");
+ const { Pool } = require("pg");
 
 
  const pool = new Pool({
   user: "postgres",
   host: "localhost",
-  database: "recetas",
+  database: "peliculas",
   //password: "bionicle2006",
   password: "L1nk3d",
   port: 5432,
-});  */
+});  
 
  /* const pool= new pool({
     connectionString: process.env.DATABASE_URL,
@@ -27,7 +27,7 @@ const pg = require('pg');
 });
  */
 
-require("dotenv").config();
+/* require("dotenv").config();
 const { Pool } = require("pg");
 
 const pool = new Pool({
@@ -37,7 +37,7 @@ const pool = new Pool({
   },
 });
 
-module.exports = pool;
+module.exports = pool; */
 
 
 module.exports = pool;

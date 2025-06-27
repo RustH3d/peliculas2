@@ -39,11 +39,13 @@ const loginUser = async (req, res) => {
 
 
 const createUser = async (req, res) => {
-  const { email, password } = req.body;
+  
+
+  const { email, password,rol } = req.body;
   if (!email || !password) {
     return res.status(400).json({ message: 'Todos los campos son obligatorios' });
   }
-
+  const rolValido= rol=== 'critic' ? 'critic ':'user'
   try {
     const existing = await usersModel.getUserByEmail(email);
     if (existing) {
@@ -53,7 +55,7 @@ const createUser = async (req, res) => {
     // Deriva un "username" del email
     const username = email.split('@')[0];
 
-    const user = await usersModel.createUser({ username, email, password });
+    const user = await usersModel.createUser({ username, email, password,rol: rolValido });
     res.status(201).json(user);
   } catch (error) {
     console.error('Error al crear usuario:', error);
@@ -64,10 +66,10 @@ const createUser = async (req, res) => {
 
 const updateUser = async (req, res) => {
   const { id } = req.params;
-  const { name, email, password } = req.body;
+  const { username, email, password } = req.body;
 
   try {
-    const updatedUser = await usersModel.updateUser({ id, name, email, password });
+    const updatedUser = await usersModel.updateUser({ id, username, email, password });
     res.json(updatedUser);
   } catch (error) {
     console.error("Error al actualizar usuario:", error);
@@ -82,7 +84,7 @@ const deleteUser= async(req,res)=>{
   console.log("ID a eliminar:", id);
 
   try {
-    await usersModel.deleteUser(parseInt(id));
+    await usersModel.deleteUser({id});
     res.status(204).send();
   } catch (error) {
     console.error("Error al eliminar usuario:", error);
