@@ -28,19 +28,20 @@ const createComment= async(req,res)=>{
 }
 
 const updateComment= async(req,res)=>{
-    const   {movie_id, puntaje, comentario}= req.body
-    const user_id= req.body.user_id||req.user?.id
+    const { id } = req.params;
+    const { puntaje, comentario } = req.body;
+    const user_id = req.body.user_id || req.user?.id;
 
-    if(!movie_id||!puntaje|| !comentario||!user_id){
-        return res.status(400).json({message:`faltan datos`})
+    if (!id || !puntaje || !comentario || !user_id) {
+        return res.status(400).json({ message: `Faltan datos` });
     }
 
-    try{
-        const newComment= await commentsModel.updateComment({user_id, movie_id, puntaje, comentario})
-        res.status(201).json(newComment)
-    }catch(error){
-    console.error("Error al crear comentario:", error);
-    res.status(500).json({ message: "Error al crear comentario" });
+    try {
+        const updatedComment = await commentsModel.updateComment({ id, user_id, comentario, puntaje });
+        res.status(200).json(updatedComment);
+    } catch (error) {
+        console.error("Error al actualizar comentario:", error);
+        res.status(500).json({ message: "Error al actualizar comentario" });
     }
 }
 
@@ -64,7 +65,7 @@ const deleteComment= async(req,res)=>{
      const user_id= req.body.user_id || req.user?.id
 
      try {
-        const succes= await commentsModel.deleteComment({id,user_id})
+        const succes= await commentsModel.deleteComment(id,user_id)
         if(!succes){
             return res.status(403).json({ message: 'No autorizado' })
         }

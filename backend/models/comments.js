@@ -26,7 +26,7 @@ const createComment = async ({ user_id, movie_id, comentario, puntaje }) => {
 
 
 
-const getCommentsByMovie= async({movie_id})=>{
+const getCommentsByMovie= async(movie_id)=>{
     const result= await db.query(`
     SELECT * FROM comments WHERE movie_id = $1 ORDER BY created_at DESC
   `, [movie_id])
