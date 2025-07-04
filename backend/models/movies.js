@@ -15,6 +15,11 @@ const getAllMovies= async()=>{
   return result.rows[0];
 }
 
+const findByTitle = async (titulo) => {
+  const result = await db.query(`SELECT * FROM movies WHERE LOWER(titulo) = LOWER($1)`, [titulo]);
+  return result.rows[0];
+};
+
 const getMovieById= async(id)=>{
     const result= await db.query(`SELECT * FROM movies WHERE id = $1`, [id])
     return result.rows[0]
@@ -43,6 +48,7 @@ module.exports = {
   createMovie,
   getAllMovies,
   getMovieById,
+  findByTitle,
   updateMovie,
   deleteMovie
 };

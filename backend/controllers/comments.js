@@ -62,13 +62,15 @@ const getCommentsByMovie= async (req,res)=>{
 
 const deleteComment= async(req,res)=>{
      const   {id}= req.params
-     const user_id= req.body.user_id || req.user?.id
+     const user_id= req.body.user_id 
+     //|| req.user?.id
 
      try {
         const succes= await commentsModel.deleteComment(id,user_id)
         if(!succes){
             return res.status(403).json({ message: 'No autorizado' })
         }
+         res.status(204).send();
      } catch (error) {
         console.error("Error al eliminar comentario:", error);
     res.status(500).json({ message: "Error al eliminar comentario" });

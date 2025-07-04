@@ -1,4 +1,6 @@
-const moviesModel= require('../models/movies')
+ const moviesModel= require('../models/movies')
+const axios = require('axios');
+require('dotenv').config();
 
 const getAllMovies= async(req,res)=>{
     try {
@@ -11,7 +13,7 @@ const getAllMovies= async(req,res)=>{
 }
 
 
-const createMovie = async (req, res) => {
+/* const createMovie = async (req, res) => {
   
   const { titulo,descripcion,fecha_lanzamiento,poster_url,tmdb_id,categorias} = req.body;
   if (!titulo || !tmdb_id) {
@@ -25,7 +27,55 @@ const createMovie = async (req, res) => {
     console.error('Error al crear pelicula:', error);
     res.status(500).json({ message: 'Error al crear pelicula' });
   }
+}; */
+
+
+
+
+const createMovie = async (req, res) => {
+  const { titulo } = req.body;
+
+  if (!titulo) {
+    return res.status(400).json({ message: 'El título es obligatorio' });
+  }
+
+  try {
+    // Verifica si ya está en la base local
+    const existingMovie = await moviesModel.findByTitle(titulo);
+    if (existingMovie) {
+      return res.status(200).json(existingMovie);
+    }
+
+    // Si no existe, buscar en TMDB
+    const tmdbRes = await axios.get('https://api.themoviedb.org/3/search/movie', {
+      params: {
+        api_key: process.env.TMDB_API_KEY,
+        query: titulo,
+      },
+    });
+
+    const movie = tmdbRes.data.results[0];
+    if (!movie) {
+      return res.status(404).json({ message: 'Película no encontrada en TMDB' });
+    }
+
+    // Insertar en la DB local
+    const newMovie = await moviesModel.createMovie({
+      titulo: movie.title,
+      descripcion: movie.overview,
+      fecha_lanzamiento: movie.release_date,
+      poster_url: `https://image.tmdb.org/t/p/w500${movie.poster_path}`,
+      tmdb_id: movie.id,
+      categorias: [], // luego podrías rellenar esto
+    });
+
+    res.status(201).json(newMovie);
+  } catch (error) {
+    console.error('Error al crear película desde TMDB:', error);
+    res.status(500).json({ message: 'Error interno al crear película' });
+  }
 };
+
 
 
 const updateMovie = async (req, res) => {
